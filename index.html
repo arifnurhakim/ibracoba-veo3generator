@@ -619,6 +619,7 @@
         generateFromImageBtn.addEventListener('click', async () => {
             const file = imageUpload.files[0];
             const targetId = imageTargetSelect.value;
+            const apiKey = "AIzaSyARjYcD5Td5x7LSz-pvCfEO2fHKac7-4b8"; // API Key Integrated
 
             if (!file) {
                 showAlert("Silakan pilih file gambar terlebih dahulu.");
@@ -626,6 +627,10 @@
             }
             if (!targetId) {
                 showAlert("Mohon pilih target untuk deskripsi gambar.");
+                return;
+            }
+             if (!apiKey) {
+                showAlert("API Key diperlukan untuk fitur ini. Silakan masukkan di kolom yang tersedia.");
                 return;
             }
             
@@ -669,7 +674,6 @@
                 };
                 
                 try {
-                    const apiKey = ""; 
                     const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
                     
                     const response = await fetch(apiUrl, {
@@ -925,11 +929,10 @@
 
 
         // --- INITIALIZATION ---
-        // ***FIXED*** Changed to window.onload for more robust initialization
-        window.onload = () => {
+        document.addEventListener('DOMContentLoaded', () => {
             welcomeModal.style.display = 'flex'; // Show welcome modal on load
             addCharacter();
-        };
+        });
 
     </script>
 </body>
