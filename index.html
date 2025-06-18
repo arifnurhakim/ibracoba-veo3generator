@@ -493,7 +493,7 @@
     <div id="myModal" class="modal">
         <div class="modal-content">
             <span class="close-button">&times;</span>
-            <p id="modalMessage" class="text-gray-800"></p>
+            <div id="modalMessage" class="text-gray-800 text-left break-words"></div>
             <button class="btn-primary mt-4" onclick="document.getElementById('myModal').style.display = 'none';">OK</button>
         </div>
     </div>
@@ -589,12 +589,12 @@
         const translatePhrase = (phrase) => translations[phrase.toLowerCase()] || phrase;
 
         // --- MODAL FUNCTIONS ---
-        const showAlert = (message) => {
-            if (!message || typeof message !== 'string' || message.trim() === '') {
+        const showAlert = (htmlMessage) => {
+            if (!htmlMessage || typeof htmlMessage !== 'string' || htmlMessage.trim() === '') {
                 console.warn("showAlert called with an empty or invalid message. Suppressing.");
                 return;
             }
-            modalMessage.textContent = message;
+            modalMessage.innerHTML = htmlMessage;
             modal.style.display = "flex";
         };
         closeButton.onclick = () => modal.style.display = "none";
@@ -619,13 +619,14 @@
         generateFromImageBtn.addEventListener('click', async () => {
             const file = imageUpload.files[0];
             const targetId = imageTargetSelect.value;
+            const apiKey = "AIzaSyARjYcD5Td5x7LSz-pvCfEO2fHKac7-4b8";
 
             if (!file) {
-                showAlert("Silakan pilih file gambar terlebih dahulu.");
+                showAlert("<p>Silakan pilih file gambar terlebih dahulu.</p>");
                 return;
             }
             if (!targetId) {
-                showAlert("Mohon pilih target untuk deskripsi gambar.");
+                showAlert("<p>Mohon pilih target untuk deskripsi gambar.</p>");
                 return;
             }
             
@@ -669,7 +670,6 @@
                 };
                 
                 try {
-                    const apiKey = ""; 
                     const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
                     
                     const response = await fetch(apiUrl, {
@@ -681,7 +681,21 @@
                     if (!response.ok) {
                          const errorBody = await response.json();
                          console.error("API Error Body:", errorBody);
-                        throw new Error(`API call failed with status: ${response.status}. Message: ${errorBody.error.message}`);
+                         if (errorBody.error && errorBody.error.status === "PERMISSION_DENIED" && errorBody.error.details) {
+                            const serviceDisabledDetail = errorBody.error.details.find(d => d.reason === "SERVICE_DISABLED");
+                            if (serviceDisabledDetail && serviceDisabledDetail.metadata && serviceDisabledDetail.metadata.activationUrl) {
+                                const activationUrl = serviceDisabledDetail.metadata.activationUrl;
+                                const userMessage = `
+                                    <p class="mb-2"><b>Aksi Diperlukan: API Belum Aktif</b></p>
+                                    <p class="mb-2 text-sm">Generative Language API belum diaktifkan untuk proyek Google Anda.</p>
+                                    <p class="mb-2 text-sm">Silakan klik tautan di bawah ini untuk mengaktifkannya. Setelah itu, tunggu beberapa menit lalu coba lagi.</p>
+                                    <a href="${activationUrl}" target="_blank" class="text-indigo-600 hover:underline break-words text-sm">${activationUrl}</a>
+                                `;
+                                showAlert(userMessage);
+                                return;
+                            }
+                        }
+                        throw new Error(`Gagal memanggil API: ${response.status}. Pesan: ${errorBody.error.message}`);
                     }
 
                     const result = await response.json();
@@ -725,7 +739,7 @@
 
                 } catch (error) {
                     console.error("Error generating description from image:", error);
-                    showAlert(`Gagal menghasilkan deskripsi: ${error.message}`);
+                    showAlert(`<p>Gagal menghasilkan deskripsi: ${error.message}</p>`);
                 } finally {
                     imageLoader.classList.add('hidden');
                     generateFromImageBtn.disabled = false;
@@ -839,11 +853,11 @@
         const generatePrompt = () => {
             updateCharacterArray();
             if (characters.length > 0 && characters.some(char => !(char.name.startsWith("Karakter ") && char.name.length > 9) && !char.mainAction)) {
-                 showAlert("Mohon lengkapi Nama Karakter dan Aksi Utama untuk setiap karakter.");
+                 showAlert("<p>Mohon lengkapi Nama Karakter dan Aksi Utama untuk setiap karakter.</p>");
                 return;
             }
             if (!locationInput.value.trim()) {
-                showAlert("Mohon lengkapi Lokasi.");
+                showAlert("<p>Mohon lengkapi Lokasi.</p>");
                 return;
             }
 
@@ -925,11 +939,10 @@
 
 
         // --- INITIALIZATION ---
-        // ***FIXED*** Changed to window.onload for more robust initialization
-        window.onload = () => {
+        document.addEventListener('DOMContentLoaded', () => {
             welcomeModal.style.display = 'flex'; // Show welcome modal on load
             addCharacter();
-        };
+        });
 
     </script>
 </body>
