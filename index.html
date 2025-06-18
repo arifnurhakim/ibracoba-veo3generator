@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Veo 3 Prompt Generator</title>
+    <title>Veo 3 Prompt Generator (Google AI)</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -156,8 +156,15 @@
             Isi detail di bawah untuk menghasilkan prompt video yang optimal untuk Gemini (Veo 3).
         </p>
         
+        <!-- API Key Input -->
+        <div class="mb-6 bg-indigo-50 border border-indigo-200 p-4 rounded-lg">
+            <label for="apiKeyInput" class="block text-gray-800 text-sm font-medium mb-2">Google AI API Key Anda:</label>
+            <input type="password" id="apiKeyInput" placeholder="Masukkan Google AI API Key Anda" class="w-full">
+            <p class="text-xs text-gray-500 mt-1">Dapatkan kunci gratis Anda dari <a href="https://aistudio.google.com/app/apikey" target="_blank" class="text-indigo-600 hover:underline">Google AI Studio</a>. Kunci tidak akan disimpan.</p>
+        </div>
+
         <!-- Image Upload Section -->
-        <h2 class="section-title">Opsi 1: Hasilkan Prompt dari Gambar</h2>
+        <h2 class="section-title">Opsi 1: Hasilkan Prompt dari Gambar (via Google AI)</h2>
         <div class="bg-gray-50 p-4 rounded-lg mb-8 border border-gray-200">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
@@ -520,6 +527,8 @@
         const generateFromImageBtn = getById('generateFromImageBtn');
         const imageTargetSelect = getById('imageTarget');
         const imageLoader = getById('image-loader');
+        const apiKeyInput = getById('apiKeyInput');
+
 
         // Form Elements
         const videoTypeSelect = getById('videoType');
@@ -619,7 +628,7 @@
         generateFromImageBtn.addEventListener('click', async () => {
             const file = imageUpload.files[0];
             const targetId = imageTargetSelect.value;
-            const apiKey = "AIzaSyARjYcD5Td5x7LSz-pvCfEO2fHKac7-4b8";
+            const apiKey = apiKeyInput.value;
 
             if (!file) {
                 showAlert("<p>Silakan pilih file gambar terlebih dahulu.</p>");
@@ -629,79 +638,61 @@
                 showAlert("<p>Mohon pilih target untuk deskripsi gambar.</p>");
                 return;
             }
+            if (!apiKey) {
+                showAlert("API Key OpenRouter diperlukan. Silakan dapatkan dari OpenRouter dan masukkan di kolom yang tersedia.");
+                return;
+            }
             
             imageLoader.classList.remove('hidden');
             generateFromImageBtn.disabled = true;
 
             const reader = new FileReader();
             reader.onload = async (e) => {
-                const base64ImageData = e.target.result.split(',')[1];
-                const mimeType = file.type;
-
+                const base64ImageData = e.target.result;
+                
                 const prompt = "Analisis gambar ini dan berikan respons dalam format JSON. Sediakan: 1. `deskripsi_detail`: Deskripsi naratif yang sangat detail dan kaya tentang subjek atau pemandangan. 2. `aksi_utama`: Jika ada, frasa singkat yang merangkum aksi utama. Jika tidak, kembalikan null. 3. `emosi`: Jika ada subjek, satu kata emosinya (ceria, sedih, marah, antusias, tenang, penasaran, datar). Jika tidak ada, kembalikan null. 4. `detail_latar`: Objek berisi `waktu` (pagi hari, siang hari, sore hari, malam hari, fajar, senja), `cuaca` (cerah, berawan, hujan, bersalju, berkabut, badai), dan `musim` (semi, panas, gugur, dingin). Jika tidak yakin, kembalikan null untuk properti tersebut.";
 
                 const payload = {
-                    contents: [{
-                        role: "user",
-                        parts: [
-                            { text: prompt },
-                            { inlineData: { mimeType: mimeType, data: base64ImageData } }
-                        ]
-                    }],
-                    generationConfig: {
-                        responseMimeType: "application/json",
-                        responseSchema: {
-                            type: "OBJECT",
-                            properties: {
-                                "deskripsi_detail": { "type": "STRING" },
-                                "aksi_utama": { "type": "STRING" },
-                                "emosi": { "type": "STRING", "enum": ["ceria", "sedih", "marah", "antusias", "tenang", "penasaran", "datar"] },
-                                "detail_latar": {
-                                    "type": "OBJECT",
-                                    "properties": {
-                                        "waktu": { "type": "STRING", "enum": ["pagi hari", "siang hari", "sore hari", "malam hari", "fajar", "senja"] },
-                                        "cuaca": { "type": "STRING", "enum": ["cerah", "berawan", "hujan", "bersalju", "berkabut", "badai"] },
-                                        "musim": { "type": "STRING", "enum": ["semi", "panas", "gugur", "dingin"] }
+                    model: "google/gemini-flash-1.5",
+                    messages: [
+                        {
+                            role: "user",
+                            content: [
+                                { type: "text", text: prompt },
+                                {
+                                    type: "image_url",
+                                    image_url: {
+                                        url: base64ImageData
                                     }
                                 }
-                            }
+                            ]
                         }
-                    }
+                    ],
+                    response_format: { type: "json_object" },
                 };
                 
                 try {
-                    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+                    const apiUrl = `https://openrouter.ai/api/v1/chat/completions`;
                     
                     const response = await fetch(apiUrl, {
                         method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
+                        headers: { 
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${apiKey}`,
+                        },
                         body: JSON.stringify(payload)
                     });
                     
                     if (!response.ok) {
                          const errorBody = await response.json();
                          console.error("API Error Body:", errorBody);
-                         if (errorBody.error && errorBody.error.status === "PERMISSION_DENIED" && errorBody.error.details) {
-                            const serviceDisabledDetail = errorBody.error.details.find(d => d.reason === "SERVICE_DISABLED");
-                            if (serviceDisabledDetail && serviceDisabledDetail.metadata && serviceDisabledDetail.metadata.activationUrl) {
-                                const activationUrl = serviceDisabledDetail.metadata.activationUrl;
-                                const userMessage = `
-                                    <p class="mb-2"><b>Aksi Diperlukan: API Belum Aktif</b></p>
-                                    <p class="mb-2 text-sm">Generative Language API belum diaktifkan untuk proyek Google Anda.</p>
-                                    <p class="mb-2 text-sm">Silakan klik tautan di bawah ini untuk mengaktifkannya. Setelah itu, tunggu beberapa menit lalu coba lagi.</p>
-                                    <a href="${activationUrl}" target="_blank" class="text-indigo-600 hover:underline break-words text-sm">${activationUrl}</a>
-                                `;
-                                showAlert(userMessage);
-                                return;
-                            }
-                        }
                         throw new Error(`Gagal memanggil API: ${response.status}. Pesan: ${errorBody.error.message}`);
                     }
 
                     const result = await response.json();
                     
-                    if (result.candidates && result.candidates.length > 0 && result.candidates[0].content && result.candidates[0].content.parts && result.candidates[0].content.parts.length > 0) {
-                        const responseText = result.candidates[0].content.parts[0].text;
+                    if (result.choices && result.choices.length > 0 && result.choices[0].message.content) {
+                        const responseText = result.choices[0].message.content;
                         const data = JSON.parse(responseText);
                         const { deskripsi_detail, aksi_utama, emosi, detail_latar } = data;
 
