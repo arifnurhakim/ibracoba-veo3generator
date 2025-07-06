@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Veo 3 Prompt Generator (Lengkap)</title>
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
@@ -64,11 +65,15 @@
         .character-block, .scene-block { @apply bg-gray-50 p-4 rounded-lg mb-4 border border-gray-200; }
         .dialog-content-block { @apply bg-blue-50 p-3 rounded-lg mt-2 mb-2 border border-blue-200; }
         .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.4); display: flex; justify-content: center; align-items: center; }
-        .modal-content { background-color: #fefefe; margin: auto; padding: 20px; border-radius: 8px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); width: 80%; max-width: 400px; text-align: center; }
+        .modal-content { background-color: #fefefe; margin: auto; padding: 20px; border-radius: 8px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); width: 80%; max-width: 500px; text-align: center; }
         .close-button { color: #aaa; float: right; font-size: 28px; font-weight: bold; }
         .close-button:hover, .close-button:focus { color: black; text-decoration: none; cursor: pointer; }
         .loader { border: 4px solid #f3f3f3; border-radius: 50%; border-top: 4px solid #6366f1; width: 30px; height: 30px; animation: spin 1s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        details > summary { list-style: none; }
+        details > summary::-webkit-details-marker { display: none; }
+        .dual-input > select { border-top-right-radius: 0; border-bottom-right-radius: 0; }
+        .dual-input > input { border-top-left-radius: 0; border-bottom-left-radius: 0; border-left: 0; }
     </style>
 </head>
 <body class="p-4">
@@ -78,12 +83,14 @@
             APLIKASI INI DIBUAT OLEH <span class="font-bold">Papahnya Ibracobra</span>
         </p>
 
+        <!-- API Key Input -->
         <div class="mb-6 bg-purple-50 border border-purple-200 p-4 rounded-lg">
             <label for="apiKeyInput" class="block text-gray-800 text-sm font-medium mb-2">Google AI API Key Anda:</label>
             <input type="password" id="apiKeyInput" placeholder="Masukkan Google AI API Key Anda" class="w-full">
             <p class="text-xs text-gray-500 mt-1">Dapatkan kunci dari <a href="https://aistudio.google.com/app/apikey" target="_blank" class="text-indigo-600 hover:underline">Google AI Studio</a>. Kunci tidak disimpan dan hanya digunakan di browser Anda.</p>
         </div>
         
+        <!-- Image Upload Section -->
         <h2 class="section-title">Opsi 1: Hasilkan Deskripsi dari Gambar</h2>
         <div class="bg-gray-50 p-4 rounded-lg mb-8 border border-gray-200">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -113,108 +120,202 @@
         
         <h2 class="section-title">Opsi 2: Buat Prompt Secara Manual</h2>
 
+        <!-- General Settings -->
         <h3 class="text-lg font-semibold text-gray-700 mt-6 mb-3">Pengaturan Umum Video</h3>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
             <div>
                 <label for="videoType" class="block text-gray-700 text-sm font-medium mb-2">Gaya Visual Video:</label>
                 <select id="videoType">
+                    <option value="" selected>Pilih...</option>
                     <option value="video sinematik">Video Sinematik</option> <option value="animasi pendek">Animasi Pendek</option> <option value="cuplikan iklan">Cuplikan Iklan</option> <option value="video dokumenter">Video Dokumenter</option> <option value="gaya vlog">Gaya Vlog</option> <option value="video musik">Video Musik</option> <option value="cuplikan film">Cuplikan Film</option> <option value="video time-lapse">Video Time-Lapse</option> <option value="video stop-motion">Video Stop-Motion</option>
                 </select>
             </div>
              <div>
-                <label for="cameraStyle" class="block text-gray-700 text-sm font-medium mb-2">Gaya Artistik Umum:</label>
-                 <select id="cameraStyle">
-                    <option value="realistis">Realistis</option> <option value="abstrak">Abstrak</option> <option value="minimalis">Minimalis</option> <option value="fantasi">Fantasi</option> <option value="sci-fi">Sci-Fi</option> <option value="vintage">Vintage</option> <option value="noir">Noir</option>
-                </select>
+                <label for="cameraStyle" class="block text-gray-700 text-sm font-medium mb-2">Gaya Video:</label>
+                 <div class="flex dual-input">
+                    <select id="cameraStyle">
+                        <option value="" selected>Pilih...</option>
+                        <option value="Realistis">Realistis</option>
+                        <option value="Animasi 3D">Animasi 3D</option>
+                        <option value="Animasi 2D">Animasi 2D</option>
+                        <option value="Kartun">Kartun</option>
+                        <option value="Anime">Anime</option>
+                        <option value="Lukisan minyak">Lukisan minyak</option>
+                        <option value="Gaya sketsa">Gaya sketsa</option>
+                        <option value="Cyberpunk">Cyberpunk</option>
+                        <option value="Fantasi">Fantasi</option>
+                    </select>
+                    <input type="text" id="cameraStyle-free" placeholder="Atau isi sendiri...">
+                </div>
+            </div>
+            <div>
+                <label for="videoMood" class="block text-gray-700 text-sm font-medium mb-2">Suasana Video:</label>
+                <div class="flex dual-input">
+                    <select id="videoMood">
+                        <option value="" selected>Pilih...</option>
+                        <option value="ceria dan penuh semangat">Ceria dan penuh semangat</option>
+                        <option value="misterius dan menegangkan">Misterius dan menegangkan</option>
+                        <option value="tenang dan damai">Tenang dan damai</option>
+                        <option value="sedih dan melankolis">Sedih dan melankolis</option>
+                        <option value="epik dan heroik">Epik dan heroik</option>
+                        <option value="komedi dan lucu">Komedi dan lucu</option>
+                    </select>
+                    <input type="text" id="videoMood-free" placeholder="Atau isi sendiri...">
+                </div>
+            </div>
+            <div class="md:col-span-2">
+                <label for="generalSubject" class="block text-gray-700 text-sm font-medium mb-2">Subjek Umum (Otomatis dari Gambar):</label>
+                <input type="text" id="generalSubject" placeholder="Deskripsi singkat gambar akan muncul di sini...">
             </div>
         </div>
 
+        <!-- Character Details -->
         <h3 class="text-lg font-semibold text-gray-700 mt-6 mb-3">Karakter</h3>
         <div id="characterInputsContainer"></div>
         <div class="flex justify-center my-4"><button id="addCharacterBtn" class="btn-secondary">Tambah Karakter</button></div>
         
+        <!-- Background Details -->
         <h3 class="text-lg font-semibold text-gray-700 mt-6 mb-3">Latar Umum</h3>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
             <div class="md:col-span-2"><label for="location" class="block text-gray-700 text-sm font-medium mb-2">Lokasi:</label><textarea id="location" rows="3" placeholder="Contoh: Di puncak gunung bersalju; Jalanan kota Tokyo yang ramai"></textarea></div>
-            <div><label for="time" class="block text-gray-700 text-sm font-medium mb-2">Waktu:</label><select id="time"><option value="pagi hari">Pagi Hari</option><option value="siang hari">Siang Hari</option><option value="sore hari">Sore Hari</option><option value="malam hari">Malam Hari</option><option value="fajar">Fajar</option><option value="senja">Senja</option></select></div>
-            <div><label for="weather" class="block text-gray-700 text-sm font-medium mb-2">Cuaca:</label><select id="weather"><option value="cerah">Cerah</option><option value="berawan">Berawan</option><option value="hujan">Hujan</option><option value="bersalju">Bersalju</option><option value="berkabut">Berkabut</option><option value="badai">Badai</option></select></div>
-            <div><label for="season" class="block text-gray-700 text-sm font-medium mb-2">Musim:</label><select id="season"><option value="semi">Semi</option><option value="panas">Panas</option><option value="gugur">Gugur</option><option value="dingin">Dingin</option></select></div>
+            
+            <div>
+                <label for="time" class="block text-gray-700 text-sm font-medium mb-2">Waktu:</label>
+                <div class="flex dual-input"><select id="time"><option value="" selected>Pilih...</option><option value="pagi hari">Pagi</option><option value="siang hari">Siang</option><option value="sore hari">Sore</option><option value="malam hari">Malam</option><option value="fajar">Fajar</option><option value="senja">Senja</option></select><input type="text" id="time-free" placeholder="Atau isi sendiri..."></div>
+            </div>
+            <div>
+                <label for="weather" class="block text-gray-700 text-sm font-medium mb-2">Cuaca:</label>
+                <div class="flex dual-input"><select id="weather"><option value="" selected>Pilih...</option><option value="cerah">Cerah</option><option value="berawan">Berawan</option><option value="hujan">Hujan</option><option value="bersalju">Bersalju</option><option value="berkabut">Berkabut</option><option value="badai">Badai</option></select><input type="text" id="weather-free" placeholder="Atau isi sendiri..."></div>
+            </div>
+            <div>
+                <label for="season" class="block text-gray-700 text-sm font-medium mb-2">Musim:</label>
+                <div class="flex dual-input"><select id="season"><option value="" selected>Pilih...</option><option value="semi">Semi</option><option value="panas">Panas</option><option value="gugur">Gugur</option><option value="dingin">Dingin</option></select><input type="text" id="season-free" placeholder="Atau isi sendiri..."></div>
+            </div>
         </div>
 
+        <!-- Scenes/Shoots -->
         <h3 class="text-lg font-semibold text-gray-700 mt-8 mb-3">Rangkaian Adegan (Shoots)</h3>
         <div id="sceneInputsContainer"></div>
         <div class="flex justify-center my-4"><button id="addSceneBtn" class="btn-secondary">Tambah Adegan</button></div>
 
-        <h3 class="text-lg font-semibold text-gray-700 mt-8 mb-3">Audio</h3>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-            <div>
-                <label for="dialogType" class="block text-gray-700 text-sm font-medium mb-2">Dialog:</label>
-                <select id="dialogType">
-                    <option value="tanpa dialog">Tanpa Dialog</option>
-                    <option value="informatif">Informatif</option>
-                    <option value="dialog natural">Dialog Natural</option>
-                    <option value="monolog">Monolog</option>
-                    <option value="interview">Wawancara</option>
-                </select>
-            </div>
-            <div id="dialogCharacterSection" class="hidden md:col-span-2">
-                <label for="dialogCharacter" class="block text-gray-700 text-sm font-medium mb-2">Karakter Dialog:</label>
-                <select id="dialogCharacter" class="max-w-xs"></select>
-                <div id="dialogContentContainer" class="mt-2"></div>
-            </div>
-            <div>
-                <label for="moodSound" class="block text-gray-700 text-sm font-medium mb-2">Mood Suara:</label>
-                <select id="moodSound"><option value="happy">Happy</option><option value="sad">Sad</option><option value="cheerful">Cheerful</option><option value="angry">Angry</option><option value="calm">Calm</option><option value="nervous">Nervous</option><option value="enthusiastic">Enthusiastic</option></select>
-            </div>
-            <div>
-                <label for="environmentSound" class="block text-gray-700 text-sm font-medium mb-2">Suara Lingkungan:</label>
-                <input type="text" id="environmentSound" placeholder="Contoh: Suara ombak, Kebisingan kota">
-            </div>
-            <div class="md:col-span-2">
-                <label for="backgroundMusic" class="block text-gray-700 text-sm font-medium mb-2">Musik Latar:</label>
-                <input type="text" id="backgroundMusic" placeholder="Contoh: Musik orkestra epik, Melodi piano tenang">
-            </div>
-        </div>
-
+        <!-- Other settings -->
         <h3 class="text-lg font-semibold text-gray-700 mt-8 mb-3">Pengaturan Akhir</h3>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
             <div><label for="videoQuality" class="block text-gray-700 text-sm font-medium mb-2">Kualitas Video:</label><select id="videoQuality"><option value="HD">HD (720p)</option><option value="Full HD">Full HD (1080p)</option><option value="4K">4K (2160p)</option><option value="8K">8K (4320p)</option></select></div>
-            <div><label for="videoDuration" class="block text-gray-700 text-sm font-medium mb-2">Durasi Video:</label><select id="videoDuration"><option value="6 detik">6 Detik</option><option value="7 detik">7 Detik</option><option value="8 detik">8 Detik</option></select></div>
             <div><label for="videoRatio" class="block text-gray-700 text-sm font-medium mb-2">Rasio Video:</label><select id="videoRatio"><option value="LANDSCAPE 16:9">LANDSCAPE 16:9</option><option value="PORTRAIT 9:16">PORTRAIT 9:16</option></select></div>
             <div class="md:col-span-3"><label for="additionalDetails" class="block text-gray-700 text-sm font-medium mb-2">Detail Tambahan Umum:</label><textarea id="additionalDetails" rows="2" placeholder="Detail lain yang berlaku untuk seluruh video"></textarea></div>
+            <div class="md:col-span-3">
+                <label for="negativePrompt" class="block text-gray-700 text-sm font-medium mb-2">Negative Prompt (Hal yang Dihindari):</label>
+                 <div class="flex items-center gap-2">
+                    <textarea id="negativePrompt" rows="2" placeholder="Contoh: teks, logo, blur, distorsi wajah" class="flex-grow"></textarea>
+                    <button id="getNegativeSuggestionBtn" class="btn-secondary flex-shrink-0 !px-3" title="Dapatkan Saran Negative Prompt dari AI">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>
+                    </button>
+                 </div>
+            </div>
         </div>
         
         <div class="flex justify-center gap-4 mb-8 border-t border-gray-200 pt-8">
-            <button id="generateBtn" class="btn-primary">Buat Prompt</button>
-            <button id="clearBtn" class="btn-secondary">Bersihkan & Reset</button>
+            <button id="generateBtn" class="btn-primary">Buat Prompt Final</button>
+            <button id="clearBtn" class="btn-secondary">Bersihkan & Reset Semua</button>
         </div>
 
-        <h2 class="text-xl font-semibold text-gray-800 mb-4">Hasil Prompt:</h2>
-        <div class="mb-6"><label for="promptId" class="block text-gray-700 text-sm font-medium mb-2">Prompt (Bahasa Indonesia):</label><textarea id="promptId" class="prompt-output" readonly></textarea></div>
-        <div><label for="promptEn" class="block text-gray-700 text-sm font-medium mb-2">Prompt (English):</label><textarea id="promptEn" class="prompt-output" readonly></textarea></div>
+        <h2 class="text-xl font-semibold text-gray-800 mb-4">Hasil Prompt Final:</h2>
+        <div class="mb-6 relative">
+            <label for="promptId" class="block text-gray-700 text-sm font-medium mb-2">Prompt (Bahasa Indonesia):</label>
+            <textarea id="promptId" class="prompt-output"></textarea>
+            <button id="copy-prompt-id-btn" class="absolute top-8 right-2 text-gray-500 hover:text-indigo-600" title="Salin Prompt">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>
+            </button>
+        </div>
     </div>
     
+    <!-- TEMPLATES -->
     <template id="characterTemplate">
         <div class="character-block" data-character-id="">
             <div class="flex justify-between items-center mb-4"><h4 class="font-semibold text-gray-700 text-lg">Karakter</h4><button type="button" class="remove-character-btn btn-danger text-xs px-2 py-1">Hapus</button></div>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div><label class="block text-gray-700 text-sm font-medium mb-2">Nama Karakter:</label><input type="text" class="character-name" placeholder="Contoh: Budi, Susan" required></div>
                 <div><label class="block text-gray-700 text-sm font-medium mb-2">Race/Ethnicity:</label><input type="text" class="character-race" placeholder="Contoh: Asia, Kaukasia"></div>
-                <div><label class="block text-gray-700 text-sm font-medium mb-2">Perkiraan Usia:</label><input type="text" class="character-age" placeholder="Contoh: 25 tahun, Paruh baya"></div>
+                <div><label class="block text-gray-700 text-sm font-medium mb-2">Perkiraan Usia:</label><input type="text" class="character-age" placeholder="Contoh: 25 tahun"></div>
                 <div><label class="block text-gray-700 text-sm font-medium mb-2">Bentuk Tubuh:</label><input type="text" class="character-body-shape" placeholder="Contoh: Atletis, Langsing"></div>
                 <div><label class="block text-gray-700 text-sm font-medium mb-2">Perkiraan Tinggi Badan:</label><input type="text" class="character-height" placeholder="Contoh: 175 cm"></div>
                 <div><label class="block text-gray-700 text-sm font-medium mb-2">Kewarganegaraan:</label><input type="text" class="character-nationality" placeholder="Contoh: Indonesia"></div>
-                <div class="md:col-span-2"><label class="block text-gray-700 text-sm font-medium mb-2">Detail Konsisten (Wajah, Rambut, dll.):</label><textarea class="character-consistent-details" rows="2" placeholder="Contoh: Wajah oval, rambut hitam ikal, mata cokelat"></textarea></div>
+                
+                <div class="md:col-span-2">
+                    <details class="bg-white border border-gray-200 rounded-lg p-3">
+                        <summary class="font-semibold text-gray-700 cursor-pointer">Detail Wajah & Rambut Konsisten (Klik untuk Buka)</summary>
+                        <div class="mt-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-4 gap-y-6">
+                            
+                            <div>
+                                <label class="block text-xs font-medium text-gray-600">Bentuk Wajah:</label>
+                                <div class="flex dual-input"><select class="character-face-shape mt-1"><option value="">Pilih...</option><option value="oval">Oval</option><option value="bulat">Bulat</option><option value="kotak">Kotak</option><option value="hati">Hati</option><option value="panjang">Panjang</option></select><input type="text" class="character-face-shape-free mt-1 text-sm" placeholder="Isi sendiri..."></div>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-gray-600">Warna Mata:</label>
+                                <div class="flex dual-input"><select class="character-eye-color mt-1"><option value="">Pilih...</option><option value="coklat">Coklat</option><option value="hitam">Hitam</option><option value="biru">Biru</option><option value="hijau">Hijau</option><option value="abu-abu">Abu-abu</option><option value="amber">Amber</option></select><input type="text" class="character-eye-color-free mt-1 text-sm" placeholder="Isi sendiri..."></div>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-gray-600">Bentuk Mata:</label>
+                                <div class="flex dual-input"><select class="character-eye-shape mt-1"><option value="">Pilih...</option><option value="almond">Almond</option><option value="bulat">Bulat</option><option value="sipit">Sipit</option><option value="besar">Besar</option></select><input type="text" class="character-eye-shape-free mt-1 text-sm" placeholder="Isi sendiri..."></div>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-gray-600">Bentuk Alis:</label>
+                                <div class="flex dual-input"><select class="character-eyebrow-shape mt-1"><option value="">Pilih...</option><option value="lurus">Lurus</option><option value="melengkung">Melengkung</option><option value="tebal">Tebal</option><option value="tipis">Tipis</option><option value="naik">Naik</option></select><input type="text" class="character-eyebrow-shape-free mt-1 text-sm" placeholder="Isi sendiri..."></div>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-gray-600">Bentuk Hidung:</label>
+                                <div class="flex dual-input"><select class="character-nose-shape mt-1"><option value="">Pilih...</option><option value="mancung">Mancung</option><option value="pesek">Pesek</option><option value="sedang">Sedang</option><option value="lebar">Lebar</option><option value="bengkok">Bengkok</option></select><input type="text" class="character-nose-shape-free mt-1 text-sm" placeholder="Isi sendiri..."></div>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-gray-600">Bentuk Bibir:</label>
+                                <div class="flex dual-input"><select class="character-lip-shape mt-1"><option value="">Pilih...</option><option value="tipis">Tipis</option><option value="penuh">Penuh</option><option value="hati">Hati</option></select><input type="text" class="character-lip-shape-free mt-1 text-sm" placeholder="Isi sendiri..."></div>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-gray-600">Gaya Rambut:</label>
+                                <div class="flex dual-input"><select class="character-hair-style mt-1"><option value="">Pilih...</option><option value="panjang">Panjang</option><option value="pendek">Pendek</option><option value="ikal">Ikal</option><option value="lurus">Lurus</option><option value="keriting">Keriting</option><option value="bergelombang">Bergelombang</option><option value="botak">Botak</option><option value="cepak">Cepak</option><option value="spike">Spike</option></select><input type="text" class="character-hair-style-free mt-1 text-sm" placeholder="Isi sendiri..."></div>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-gray-600">Warna Rambut:</label>
+                                <div class="flex dual-input"><select class="character-hair-color mt-1"><option value="">Pilih...</option><option value="hitam">Hitam</option><option value="coklat">Coklat</option><option value="pirang">Pirang</option><option value="merah">Merah</option><option value="uban">Uban/Abu-abu</option></select><input type="text" class="character-hair-color-free mt-1 text-sm" placeholder="Isi sendiri..."></div>
+                            </div>
+                             <div>
+                                <label class="block text-xs font-medium text-gray-600">Kesan Ekspresi:</label>
+                                <div class="flex dual-input"><select class="character-general-expression mt-1"><option value="">Pilih...</option><option value="ramah">Ramah</option><option value="serius">Serius</option><option value="sedih">Sedih</option><option value="senang">Senang</option><option value="marah">Marah</option><option value="kalem">Kalem</option><option value="misterius">Misterius</option></select><input type="text" class="character-general-expression-free mt-1 text-sm" placeholder="Isi sendiri..."></div>
+                            </div>
+                            <div class="lg:col-span-3">
+                                <label class="block text-xs font-medium text-gray-600">Ciri/Keunikan Lainnya:</label>
+                                <input type="text" class="character-other-features mt-1" placeholder="Tahi lalat, bekas luka, dll.">
+                            </div>
+                        </div>
+                    </details>
+                </div>
+
                 <div class="md:col-span-2"><label class="block text-gray-700 text-sm font-medium mb-2">Pakaian (Clothing):</label><textarea class="character-clothing" rows="2" placeholder="Contoh: Kemeja flanel merah, celana jeans biru"></textarea></div>
                 <div><label class="block text-gray-700 text-sm font-medium mb-2">Gaya (Style):</label><input type="text" class="character-style" placeholder="Contoh: Kasual, Formal"></div>
                 <div><label class="block text-gray-700 text-sm font-medium mb-2">Aksesoris:</label><input type="text" class="character-accessories" placeholder="Contoh: Kacamata, Jam tangan"></div>
                 <div class="md:col-span-2"><label class="block text-gray-700 text-sm font-medium mb-2">Aksi Utama/Umum:</label><textarea class="character-main-action" rows="2" placeholder="Jelaskan secara naratif aksi atau situasi utama dalam gambar"></textarea></div>
                 <div><label class="block text-gray-700 text-sm font-medium mb-2">Pose:</label><input type="text" class="character-pose" placeholder="Contoh: Duduk bersila, Berdiri tegap"></div>
+                
                 <div>
                     <label class="block text-gray-700 text-sm font-medium mb-2">Emosi Umum:</label>
-                    <select class="character-emotion"><option value="">Pilih Emosi</option><option value="ceria">Ceria</option><option value="sedih">Sedih</option><option value="marah">Marah</option><option value="antusias">Antusias</option><option value="tenang">Tenang</option><option value="penasaran">Penasaran</option><option value="datar">Datar</option></select>
+                    <div class="flex dual-input"><select class="character-emotion"><option value="">Pilih...</option><option value="ceria">Ceria</option><option value="sedih">Sedih</option><option value="marah">Marah</option><option value="antusias">Antusias</option><option value="tenang">Tenang</option><option value="penasaran">Penasaran</option><option value="datar">Datar</option></select><input type="text" class="character-emotion-free" placeholder="Atau isi sendiri..."></div>
                 </div>
-                 <div class="md:col-span-2"><label class="block text-gray-700 text-sm font-medium mb-2">Detail Tambahan Karakter:</label><textarea class="character-additional-details" rows="2" placeholder="Contoh: Memiliki bekas luka di pipi"></textarea></div>
+
+                <div class="md:col-span-2"><label class="block text-gray-700 text-sm font-medium mb-2">Detail Tambahan Karakter:</label><textarea class="character-additional-details" rows="2" placeholder="Contoh: Memiliki bekas luka di pipi"></textarea></div>
+                
+                <div class="md:col-span-2 mt-4 pt-4 border-t border-gray-300">
+                    <button type="button" class="generate-char-prompt-btn btn-secondary w-full">Generate Prompt Karakter Konsisten</button>
+                </div>
+                <div class="md:col-span-2">
+                    <label class="block text-gray-700 text-sm font-medium mb-2">Hasil Prompt Karakter Konsisten:</label>
+                    <div class="relative">
+                        <textarea class="character-generated-prompt prompt-output" rows="4" placeholder="Hasil prompt untuk karakter ini akan muncul di sini..."></textarea>
+                        <button type="button" class="copy-char-prompt-btn absolute top-2 right-2 text-gray-500 hover:text-indigo-600" title="Salin Prompt Karakter">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
     </template>
@@ -223,13 +324,75 @@
         <div class="scene-block" data-scene-id="">
              <div class="flex justify-between items-center mb-4"><h4 class="font-semibold text-gray-700 text-lg">Adegan</h4><button type="button" class="remove-scene-btn btn-danger text-xs px-2 py-1">Hapus</button></div>
              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div class="md:col-span-2"><label class="block text-gray-700 text-sm font-medium mb-2">Deskripsi Aksi Adegan:</label><textarea class="scene-description" rows="3" placeholder="Jelaskan apa yang terjadi di adegan ini. Contoh: Seorang pria berlari melintasi jembatan."></textarea></div>
-                <div><label class="block text-gray-700 text-sm font-medium mb-2">Pergerakan Kamera:</label><select class="scene-camera-movement"><option value="statis">Statis</option><option value="pan">Pan</option><option value="tilt">Tilt</option><option value="dolly">Dolly</option><option value="zoom">Zoom</option><option value="crane">Crane</option><option value="handheld">Handheld</option><option value="drone">Drone</option><option value="stabil">Stabil</option></select></div>
-                <div><label class="block text-gray-700 text-sm font-medium mb-2">Sudut Kamera:</label><select class="scene-camera-angle"><option value="eye-level">Eye-level</option><option value="low-angle">Low Angle</option><option value="high-angle">High Angle</option><option value="dutch-angle">Dutch Angle</option><option value="bird-eye">Bird's Eye</option><option value="worm-eye">Worm's Eye</option></select></div>
-                <div><label class="block text-gray-700 text-sm font-medium mb-2">Fokus:</label><select class="scene-camera-focus"><option value="dalam">Dalam</option><option value="dangkal">Dangkal</option><option value="rack-focus">Rack Focus</option></select></div>
-                <div><label class="block text-gray-700 text-sm font-medium mb-2">Pencahayaan:</label><select class="scene-lighting"><option value="terang">Terang</option><option value="gelap">Gelap</option><option value="natural">Natural</option><option value="dramatis">Dramatis</option><option value="siluet">Siluet</option><option value="lembut">Lembut</option><option value="keras">Keras</option></select></div>
-                <div><label class="block text-gray-700 text-sm font-medium mb-2">Gradasi Warna:</label><select class="scene-color-grading"><option value="hangat">Hangat</option><option value="dingin">Dingin</option><option value="monokrom">Monokrom</option><option value="vibran">Vibran</option><option value="pastel">Pastel</option><option value="retro">Retro</option></select></div>
-            </div>
+                <div class="md:col-span-2"><label class="block text-gray-700 text-sm font-medium mb-2">Deskripsi Aksi Adegan:</label><textarea class="scene-description" rows="3" placeholder="Jelaskan apa yang terjadi di adegan ini."></textarea></div>
+                
+                <div>
+                    <label class="block text-gray-700 text-sm font-medium mb-2">Pergerakan Kamera:</label>
+                    <div class="flex dual-input"><select class="scene-camera-movement"><option value="" selected>Pilih...</option><option value="statis">Statis</option><option value="pan">Pan</option><option value="tilt">Tilt</option><option value="dolly">Dolly</option><option value="zoom">Zoom</option><option value="crane">Crane</option><option value="handheld">Handheld</option><option value="drone">Drone</option><option value="stabil">Stabil</option></select><input type="text" class="scene-camera-movement-free" placeholder="Atau isi sendiri..."></div>
+                </div>
+                <div>
+                    <label class="block text-gray-700 text-sm font-medium mb-2">Sudut Kamera:</label>
+                    <div class="flex dual-input"><select class="scene-camera-angle"><option value="" selected>Pilih...</option><option value="eye-level">Eye-level</option><option value="low-angle">Low Angle</option><option value="high-angle">High Angle</option><option value="dutch-angle">Dutch Angle</option><option value="bird-eye">Bird's Eye</option><option value="worm-eye">Worm's Eye</option></select><input type="text" class="scene-camera-angle-free" placeholder="Atau isi sendiri..."></div>
+                </div>
+                <div>
+                    <label class="block text-gray-700 text-sm font-medium mb-2">Fokus:</label>
+                    <div class="flex dual-input"><select class="scene-camera-focus"><option value="" selected>Pilih...</option><option value="dalam">Dalam</option><option value="dangkal">Dangkal</option><option value="rack-focus">Rack Focus</option></select><input type="text" class="scene-camera-focus-free" placeholder="Atau isi sendiri..."></div>
+                </div>
+                <div>
+                    <label class="block text-gray-700 text-sm font-medium mb-2">Pencahayaan:</label>
+                    <div class="flex dual-input"><select class="scene-lighting"><option value="" selected>Pilih...</option><option value="terang">Terang</option><option value="gelap">Gelap</option><option value="natural">Natural</option><option value="dramatis">Dramatis</option><option value="siluet">Siluet</option><option value="lembut">Lembut</option><option value="keras">Keras</option></select><input type="text" class="scene-lighting-free" placeholder="Atau isi sendiri..."></div>
+                </div>
+                <div>
+                    <label class="block text-gray-700 text-sm font-medium mb-2">Gradasi Warna:</label>
+                    <div class="flex dual-input"><select class="scene-color-grading"><option value="" selected>Pilih...</option><option value="hangat">Hangat</option><option value="dingin">Dingin</option><option value="monokrom">Monokrom</option><option value="vibran">Vibran</option><option value="pastel">Pastel</option><option value="retro">Retro</option></select><input type="text" class="scene-color-grading-free" placeholder="Atau isi sendiri..."></div>
+                </div>
+                
+                <div class="md:col-span-2 mt-4 pt-4 border-t border-gray-300 flex items-center gap-4">
+                    <button type="button" class="get-scene-suggestion-btn btn-secondary w-full">Dapatkan Rekomendasi Deskripsi & Kamera dari AI</button>
+                    <div class="scene-loader loader hidden"></div>
+                </div>
+                
+                <div class="md:col-span-2 mt-4 pt-4 border-t border-gray-300">
+                    <details class="bg-white border border-gray-200 rounded-lg p-3">
+                        <summary class="font-semibold text-gray-700 cursor-pointer">Detail Audio Adegan (Klik untuk Buka)</summary>
+                        <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-gray-700 text-sm font-medium mb-2">Dialog Adegan:</label>
+                                <select class="scene-dialog-type">
+                                    <option value="tanpa dialog">Tanpa Dialog</option><option value="informatif">Informatif</option><option value="dialog natural">Dialog Natural</option><option value="monolog">Monolog</option><option value="interview">Wawancara</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-gray-700 text-sm font-medium mb-2">Mood Suara Adegan:</label>
+                                <select class="scene-mood-sound"><option value="happy">Happy</option><option value="sad">Sad</option><option value="cheerful">Cheerful</option><option value="angry">Angry</option><option value="calm">Calm</option><option value="nervous">Nervous</option><option value="enthusiastic">Enthusiastic</option></select>
+                            </div>
+                             <div>
+                                <label class="block text-gray-700 text-sm font-medium mb-2">Suara/Musik Adegan:</label>
+                                <input type="text" class="scene-sound-music" placeholder="Contoh: Ombak tenang, musik jazz">
+                            </div>
+                            <div>
+                                <label class="block text-gray-700 text-sm font-medium mb-2">Durasi Adegan:</label>
+                                <select class="scene-duration"><option value="4 detik">4 Detik</option><option value="6 detik">6 Detik</option><option value="8 detik">8 Detik</option></select>
+                            </div>
+                            <div class="scene-dialog-details hidden md:col-span-2">
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                                    <div>
+                                        <label class="block text-gray-700 text-sm font-medium mb-2">Bahasa Dialog:</label>
+                                        <select class="scene-dialog-language"><option value="Indonesia">Indonesia</option><option value="Inggris">Inggris</option></select>
+                                    </div>
+                                    <div>
+                                        <label class="block text-gray-700 text-sm font-medium mb-2">Dialek/Aksen (Opsional):</label>
+                                        <input type="text" class="scene-dialog-dialect" placeholder="Contoh: British, Jawa, Sunda">
+                                    </div>
+                                </div>
+                                <label class="block text-gray-700 text-sm font-medium mb-2">Karakter Dialog:</label>
+                                <select class="scene-dialog-character max-w-xs"></select>
+                                <div class="scene-dialog-content-container mt-2"></div>
+                            </div>
+                        </div>
+                    </details>
+                </div>
+             </div>
         </div>
     </template>
 
@@ -245,27 +408,78 @@
         // --- DOM ELEMENTS ---
         const apiKeyInput = getById('apiKeyInput');
         const imageUpload = getById('imageUpload'), imagePreviewContainer = getById('image-preview-container'), imagePreview = getById('imagePreview'), generateFromImageBtn = getById('generateFromImageBtn'), imageTargetSelect = getById('imageTarget'), imageLoader = getById('image-loader');
-        const videoTypeSelect = getById('videoType'), cameraStyleSelect = getById('cameraStyle');
+        const videoTypeSelect = getById('videoType');
+        const cameraStyleSelect = getById('cameraStyle');
+        const cameraStyleFreeInput = getById('cameraStyle-free');
         const addCharacterBtn = getById('addCharacterBtn'), characterInputsContainer = getById('characterInputsContainer'), characterTemplate = getById('characterTemplate');
-        const locationInput = getById('location'), timeSelect = getById('time'), weatherSelect = getById('weather'), seasonSelect = getById('season');
+        const locationInput = getById('location');
         const addSceneBtn = getById('addSceneBtn'), sceneInputsContainer = getById('sceneInputsContainer'), sceneTemplate = getById('sceneTemplate');
-        const dialogTypeSelect = getById('dialogType'), dialogCharacterSection = getById('dialogCharacterSection'), dialogCharacterSelect = getById('dialogCharacter'), dialogContentContainer = getById('dialogContentContainer'), moodSoundSelect = getById('moodSound'), environmentSoundInput = getById('environmentSound'), backgroundMusicInput = getById('backgroundMusic');
-        const videoQualitySelect = getById('videoQuality'), videoDurationSelect = getById('videoDuration'), videoRatioSelect = getById('videoRatio'), additionalDetailsTextarea = getById('additionalDetails');
-        const promptIdOutput = getById('promptId'), promptEnOutput = getById('promptEn'), generateBtn = getById('generateBtn'), clearBtn = getById('clearBtn');
+        const videoQualitySelect = getById('videoQuality'), videoRatioSelect = getById('videoRatio'), additionalDetailsTextarea = getById('additionalDetails'), negativePromptInput = getById('negativePrompt');
+        const generateBtn = getById('generateBtn'), clearBtn = getById('clearBtn');
         const modal = getById('myModal'), modalMessage = getById('modalMessage'), closeButton = document.querySelector(".close-button"), welcomeModal = getById('welcomeModal'), closeWelcomeBtn = getById('closeWelcomeBtn');
+        const getNegativeSuggestionBtn = getById('getNegativeSuggestionBtn');
+        const promptIdOutput = getById('promptId');
 
-        // --- TRANSLATION DICTIONARY ---
-        const translations = { "video sinematik": "Cinematic Video", "animasi pendek": "Short Animation", "cuplikan iklan": "Advertisement Snippet", "video dokumenter": "Documentary Video", "gaya vlog": "Vlog Style", "video musik": "Music Video", "cuplikan film": "Movie Clip", "video time-lapse": "Time-Lapse Video", "video stop-motion": "Stop-Motion Video", "ceria": "cheerful", "sedih": "sad", "marah": "angry", "antusias": "enthusiastic", "tenang": "calm", "penasaran": "curious", "datar": "flat", "pagi hari": "morning", "siang hari": "daytime", "sore hari": "afternoon", "malam hari": "night", "fajar": "dawn", "senja": "dusk", "cerah": "clear", "berawan": "cloudy", "hujan": "rainy", "bersalju": "snowy", "berkabut": "foggy", "badai": "stormy", "semi": "spring", "panas": "summer", "gugur": "autumn", "dingin": "winter", "realistis": "realistic", "abstrak": "abstract", "minimalis": "minimalist", "fantasi": "fantasy", "sci-fi": "sci-fi", "vintage": "vintage", "noir": "noir", "statis": "static", "pan": "panning", "tilt": "tilting", "dolly": "dollying", "zoom": "zooming", "crane": "crane shot", "handheld": "handheld", "drone": "drone shot", "stabil": "stable camera movement", "eye-level": "eye-level", "low-angle": "low angle", "high-angle": "high angle", "dutch-angle": "dutch angle", "bird-eye": "bird's eye view", "worm-eye": "worm's eye view", "dalam": "deep focus", "dangkal": "shallow focus", "rack-focus": "rack focus", "terang": "bright", "gelap": "dark", "natural": "natural", "dramatis": "dramatic", "siluet": "silhouette", "lembut": "soft", "keras": "hard", "hangat": "warm", "dingin": "cool", "monokrom": "monochrome", "vibran": "vibrant", "pastel": "pastel", "retro": "retro", "tanpa dialog": "no dialogue", "informatif": "informative", "dialog natural": "natural dialogue", "monolog": "monologue", "wawancara": "interview", "happy": "happy", "sad": "sad", "cheerful": "cheerful", "angry": "angry", "calm": "calm", "nervous": "nervous", "enthusiastic": "enthusiastic", "HD": "HD", "Full HD": "Full HD", "4K": "4K", "8K": "8K", "6 detik": "6 seconds", "7 detik": "7 seconds", "8 detik": "8 seconds", "LANDSCAPE 16:9": "LANDSCAPE 16:9", "PORTRAIT 9:16": "PORTRAIT 9:16" };
-        const translatePhrase = (phrase) => translations[phrase.toLowerCase()] || phrase;
-
-        // --- MODAL & ALERT FUNCTIONS ---
+        // --- HELPER FUNCTIONS ---
         const showAlert = (message) => {
             if (!message || typeof message !== 'string' || message.trim() === '') return;
             modalMessage.innerHTML = message;
             modal.style.display = "flex";
         };
         closeButton.onclick = () => modal.style.display = "none";
-        
+
+        const getDropdownOrFreeTextValue = (baseName, container) => {
+            const scope = container || document;
+            const freeTextInput = scope.querySelector(`.${baseName}-free, #${baseName}-free`);
+            if (freeTextInput && freeTextInput.value.trim()) {
+                return freeTextInput.value.trim();
+            }
+            const dropdown = scope.querySelector(`.${baseName}, #${baseName}`);
+            return dropdown ? dropdown.value : '';
+        };
+
+        const updateStyleKeywords = () => {
+            const style = getDropdownOrFreeTextValue('cameraStyle');
+            const additionalDetails = additionalDetailsTextarea;
+            const negativePrompt = negativePromptInput;
+
+            const realismKeywords = "video sinematik realistis, rekaman video nyata, ultra realistis";
+            const antiAnimationKeywords = "animasi, kartun, 3D, lukisan";
+            const antiRealismKeywords = "realistis, foto, nyata";
+
+            // Helper to remove keywords
+            const removeKeywords = (text, keywords) => {
+                let newText = ` ${text} `;
+                keywords.split(', ').forEach(kw => {
+                    const regex = new RegExp(`\\s*,?\\s*${kw}\\s*,?\\s*`, 'gi');
+                    newText = newText.replace(regex, ' ');
+                });
+                return newText.replace(/ , /g, ', ').replace(/, ,/g, ',').trim().replace(/^,|,$/g, '').trim();
+            };
+            
+            // Clean all managed keywords first
+            let currentDetails = removeKeywords(additionalDetails.value, realismKeywords);
+            let currentNegative = removeKeywords(negativePrompt.value, antiAnimationKeywords);
+            currentNegative = removeKeywords(currentNegative, antiRealismKeywords);
+
+            if (style === 'Realistis') {
+                if (currentDetails) currentDetails += ", ";
+                additionalDetails.value = currentDetails + realismKeywords;
+                
+                if (currentNegative) currentNegative += ", ";
+                negativePrompt.value = currentNegative + antiAnimationKeywords;
+
+            } else if (style) { // Only add anti-realism if a style is chosen
+                if (currentNegative) currentNegative += ", ";
+                negativePrompt.value = currentNegative + antiRealismKeywords;
+                additionalDetails.value = currentDetails;
+            } else { // If "Pilih..." is selected, just clean up
+                 additionalDetails.value = currentDetails;
+                 negativePrompt.value = currentNegative;
+            }
+        };
+
+
         // --- IMAGE-BASED GENERATION ---
         imageUpload.addEventListener('change', (event) => {
             const file = event.target.files[0];
@@ -281,9 +495,8 @@
             const targetId = imageTargetSelect.value;
             const apiKey = apiKeyInput.value.trim();
 
-            if (!apiKey) { showAlert("<p>API Key Google AI diperlukan. Silakan masukkan di kolom yang tersedia.</p>"); return; }
+            if (!apiKey) { showAlert("<p>API Key Google AI diperlukan.</p>"); return; }
             if (!file) { showAlert("<p>Silakan pilih file gambar.</p>"); return; }
-            if (!targetId) { showAlert("<p>Mohon pilih target deskripsi (Karakter atau Latar).</p>"); return; }
             
             imageLoader.classList.remove('hidden');
             generateFromImageBtn.disabled = true;
@@ -291,18 +504,11 @@
             const reader = new FileReader();
             reader.onload = async (e) => {
                 const base64ImageData = e.target.result.split(',')[1];
-                const prompt = "Analisis gambar ini secara mendetail dan berikan respons dalam format JSON. Pastikan untuk mengisi semua kunci berikut:\n1. `aksi_utama`: Jelaskan aksi atau situasi utama dalam gambar secara lengkap, naratif, dan terperinci.\n2. `emosi`: Tentukan emosi umum subjek (misal: ceria, sedih, fokus, dll.).\n3. `aksesoris`: Sebutkan semua aksesoris yang terlihat pada subjek.\n4. `detail_tambahan_karakter`: Sebutkan detail unik atau tambahan lainnya pada karakter.\n5. `ras`, `perkiraan_usia`, `bentuk_tubuh`, `perkiraan_tinggi`.\n6. `pakaian`, `gaya`, `pose`.\n7. `deskripsi_konsisten`: Detail penting untuk konsistensi (wajah, rambut, dll).\n8. `lokasi_detail`: Deskripsi lokasi.\n9. `detail_latar`: Objek JSON berisi `waktu`, `cuaca`, `musim`.\nGunakan string kosong atau null jika suatu detail benar-benar tidak dapat ditentukan.";
+                const prompt = "Analisis gambar ini secara mendetail dan berikan respons dalam format JSON. Untuk setiap kunci berikut, berikan deskripsi teks bebas. PENTING: Jika suatu detail tidak dapat ditemukan atau tidak relevan, kembalikan string kosong (\"\") untuk kunci tersebut, jangan menulis 'tidak ada' atau sejenisnya.\n1. `subjek_umum`: Deskripsi singkat tentang isi gambar.\n2. `aksi_utama`: Jelaskan aksi atau situasi utama.\n3. `emosi`: Tentukan emosi umum subjek.\n4. `aksesoris`, `ras`, `perkiraan_usia`, `bentuk_tubuh`, `perkiraan_tinggi`.\n5. `pakaian`: Deskripsikan pakaian dengan detail.\n6. `gaya`, `pose`.\n7. `lokasi_detail`: Deskripsikan lokasi dalam gambar dengan amat sangat detail. Sebutkan semua objek yang terlihat, suasana ruangan, pencahayaan, dan elemen arsitektur atau alam yang relevan.\n8. `detail_latar`: Objek JSON berisi deskripsi teks untuk `waktu`, `cuaca`, `musim`.\n9. `detail_wajah`: Objek JSON berisi deskripsi teks untuk setiap detail wajah (`bentuk_wajah`, `warna_mata`, dll) dan `ciri_khas_lain`.";
                 
                 const payload = {
-                    contents: [{
-                        parts: [
-                            { text: prompt },
-                            { inline_data: { mime_type: file.type, data: base64ImageData } }
-                        ]
-                    }],
-                    generationConfig: {
-                        response_mime_type: "application/json",
-                    }
+                    contents: [{ parts: [ { text: prompt }, { inline_data: { mime_type: file.type, data: base64ImageData } } ] }],
+                    generationConfig: { response_mime_type: "application/json" }
                 };
                 
                 try {
@@ -310,14 +516,8 @@
                     const response = await fetch(apiUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
 
                     if (!response.ok) {
-                        let errorMsg = `Panggilan API gagal: ${response.status}`;
-                        try { 
-                            const errorBody = await response.json(); 
-                            errorMsg += `<br>Pesan: ${errorBody.error.message}`; 
-                        } catch (e) { 
-                            errorMsg += `<br>Status: ${response.statusText}`; 
-                        }
-                        throw new Error(errorMsg);
+                        const errorBody = await response.json().catch(() => ({ error: { message: response.statusText } }));
+                        throw new Error(`Panggilan API gagal: ${response.status}. Pesan: ${errorBody.error.message}`);
                     }
 
                     const result = await response.json();
@@ -327,90 +527,119 @@
                         let data;
                         try { data = JSON.parse(responseText); } catch (e) { throw new Error("Menerima respons JSON yang tidak valid dari AI."); }
 
+                        getById('generalSubject').value = data.subjek_umum || '';
+                        getById('location').value = data.lokasi_detail || '';
                         if (data.detail_latar) { 
-                            if (data.detail_latar.waktu) timeSelect.value = data.detail_latar.waktu; 
-                            if (data.detail_latar.cuaca) weatherSelect.value = data.detail_latar.cuaca; 
-                            if (data.detail_latar.musim) seasonSelect.value = data.detail_latar.musim;
+                           getById('time-free').value = data.detail_latar.waktu || '';
+                           getById('weather-free').value = data.detail_latar.cuaca || '';
+                           getById('season-free').value = data.detail_latar.musim || '';
                         }
 
-                        if (targetId === 'location') {
-                            if (data.lokasi_detail) locationInput.value = data.lokasi_detail;
-                            showAlert('<p>Deskripsi lokasi dan latar berhasil diisi dari gambar.</p>');
-                        } else {
-                            const targetBlock = document.querySelector(`.character-block[data-character-id="${targetId}"]`);
-                            if (targetBlock) {
-                                const keyMap = {
-                                    'ras': '.character-race', 'perkiraan_usia': '.character-age', 'bentuk_tubuh': '.character-body-shape',
-                                    'perkiraan_tinggi': '.character-height', 'kewarganegaraan': '.character-nationality',
-                                    'deskripsi_konsisten': '.character-consistent-details', 'pakaian': '.character-clothing', 'gaya': '.character-style',
-                                    'aksesoris': '.character-accessories', 'aksi_utama': '.character-main-action', 'pose': '.character-pose',
-                                    'emosi': '.character-emotion', 'detail_tambahan_karakter': '.character-additional-details'
-                                };
-                                
-                                for (const key in keyMap) {
-                                    if (data[key]) {
-                                        const input = targetBlock.querySelector(keyMap[key]);
-                                        if (input) {
-                                            let valueToSet = data[key];
-                                            if (typeof valueToSet === 'object' && valueToSet !== null) {
-                                                valueToSet = Object.entries(valueToSet)
-                                                                 .map(([objKey, objValue]) => `${objKey}: ${objValue}`)
-                                                                 .join(', ');
-                                            }
-                                            input.value = valueToSet;
-                                        }
+                        const targetBlock = document.querySelector(`.character-block[data-character-id="${targetId}"]`);
+                        if (targetBlock) {
+                            const keyMap = {
+                                'ras': '.character-race', 'perkiraan_usia': '.character-age', 'bentuk_tubuh': '.character-body-shape',
+                                'perkiraan_tinggi': '.character-height', 'kewarganegaraan': '.character-nationality',
+                                'pakaian': '.character-clothing', 'gaya': '.character-style', 'aksesoris': '.character-accessories', 
+                                'aksi_utama': '.character-main-action', 'pose': '.character-pose', 'emosi': '.character-emotion-free',
+                                'detail_wajah.bentuk_wajah': '.character-face-shape-free', 'detail_wajah.warna_mata': '.character-eye-color-free',
+                                'detail_wajah.bentuk_mata': '.character-eye-shape-free', 'detail_wajah.bentuk_alis': '.character-eyebrow-shape-free',
+                                'detail_wajah.bentuk_hidung': '.character-nose-shape-free', 'detail_wajah.bentuk_bibir': '.character-lip-shape-free',
+                                'detail_wajah.gaya_rambut': '.character-hair-style-free', 'detail_wajah.warna_rambut': '.character-hair-color-free',
+                                'detail_wajah.kesan_ekspresi': '.character-general-expression-free', 'detail_wajah.ciri_khas_lain': '.character-other-features'
+                            };
+                            
+                            for (const key in keyMap) {
+                                let value = key.includes('.') ? key.split('.').reduce((o, i) => o?.[i], data) : data[key];
+                                if (value) { 
+                                    const input = targetBlock.querySelector(keyMap[key]);
+                                    if (input) {
+                                        input.value = String(value);
                                     }
                                 }
-                                showAlert(`<p>Deskripsi detail untuk karakter yang dipilih berhasil dibuat.</p>`);
-                            } else { showAlert("<p>Karakter target tidak ditemukan.</p>"); }
+                            }
+                            showAlert(`<p>Deskripsi detail untuk karakter berhasil diisi.</p>`);
+                        } else {
+                           showAlert('<p>Deskripsi umum dan latar berhasil diisi dari gambar.</p>');
                         }
-                    } else { throw new Error(result.promptFeedback ? `Permintaan diblokir: ${result.promptFeedback.blockReason}` : "Respons API kosong atau tidak valid."); }
-                } catch (error) { console.error("Error:", error); showAlert(`<p>${error.message}</p>`); } finally { imageLoader.classList.add('hidden'); generateFromImageBtn.disabled = false; }
+                    } else { throw new Error(result.promptFeedback ? `Permintaan diblokir: ${result.promptFeedback.blockReason}` : "Respons API kosong."); }
+                } catch (error) { console.error("Error:", error); showAlert(`<p>Gagal mengisi data: ${error.message}</p>`); } finally { imageLoader.classList.add('hidden'); generateFromImageBtn.disabled = false; }
             };
             reader.readAsDataURL(file);
         });
 
-        // --- DYNAMIC UI FUNCTIONS (Characters, Scenes, Dialog) ---
-        const getCharacters = () => Array.from(document.querySelectorAll('.character-block')).map(block => ({ id: block.dataset.characterId, name: block.querySelector('.character-name').value.trim() || `Karakter ${block.dataset.characterId}` }));
-        
-        const updateAllDropdowns = () => {
-            updateImageTargetDropdown();
-            updateDialogCharacterDropdown();
-        };
+        // --- CHARACTER FUNCTIONS ---
+        const generateCharacterPrompt = (characterBlock) => {
+            const outputTextarea = characterBlock.querySelector('.character-generated-prompt');
+            const getFeatureValue = (featureName) => getDropdownOrFreeTextValue(`character-${featureName}`, characterBlock);
+            
+            const parts = [];
 
-        const updateImageTargetDropdown = () => {
-            const characters = getCharacters();
-            const selectedValue = imageTargetSelect.value;
-            imageTargetSelect.innerHTML = '<option value="location">Latar/Lokasi Umum</option>';
-            if (characters.length > 0) { imageTargetSelect.innerHTML += characters.map(char => `<option value="${char.id}">${char.name}</option>`).join(''); }
-            if (selectedValue && Array.from(imageTargetSelect.options).some(opt => opt.value === selectedValue)) { imageTargetSelect.value = selectedValue; }
-        };
+            const name = characterBlock.querySelector('.character-name').value.trim();
+            parts.push(name || "seorang karakter");
 
-        const updateDialogCharacterDropdown = () => {
-            const characters = getCharacters();
-            const selectedValue = dialogCharacterSelect.value;
-            dialogCharacterSelect.innerHTML = '';
-            if (dialogTypeSelect.value !== "tanpa dialog" && characters.length > 0) {
-                dialogCharacterSelect.innerHTML = `<option value="all">Semua Karakter</option>` + characters.map(char => `<option value="${char.id}">${char.name}</option>`).join('');
-                dialogCharacterSelect.value = selectedValue || 'all';
+            const race = characterBlock.querySelector('.character-race').value.trim();
+            if(race) parts.push(race);
+
+            const age = characterBlock.querySelector('.character-age').value.trim();
+            if(age) parts.push(`berusia ${age}`);
+            
+            const nationality = characterBlock.querySelector('.character-nationality').value.trim();
+            if(nationality) parts.push(`berkewarganegaraan ${nationality}`);
+
+            const bodyShape = characterBlock.querySelector('.character-body-shape').value.trim();
+            const height = characterBlock.querySelector('.character-height').value.trim();
+            if(bodyShape || height) {
+                let physicalDesc = 'dengan';
+                if(bodyShape) physicalDesc += ` bentuk tubuh ${bodyShape}`;
+                if(bodyShape && height) physicalDesc += ' dan';
+                if(height) physicalDesc += ` tinggi sekitar ${height}`;
+                parts.push(physicalDesc);
             }
-            updateDialogContentInputs();
-        };
 
-        const updateDialogContentInputs = () => {
-            const characters = getCharacters();
-            dialogContentContainer.innerHTML = '';
-            const dialogType = dialogTypeSelect.value;
-            const selectedCharId = dialogCharacterSelect.value;
-            if (dialogType === "tanpa dialog") { dialogCharacterSection.classList.add('hidden'); return; }
-            dialogCharacterSection.classList.remove('hidden');
-            const createDialogTextarea = (char) => `<div class="dialog-content-block"><label for="dialogContent-${char.id}" class="block text-gray-700 text-sm font-medium mb-1">Dialog ${char.name}:</label><textarea id="dialogContent-${char.id}" class="w-full dialog-content-textarea" rows="2" placeholder="Tulis dialog..."></textarea></div>`;
-            if (selectedCharId === 'all' && characters.length > 0) {
-                dialogContentContainer.innerHTML = characters.map(createDialogTextarea).join('');
-            } else if (selectedCharId) {
-                const selectedChar = characters.find(char => char.id == selectedCharId);
-                if (selectedChar) dialogContentContainer.innerHTML = createDialogTextarea(selectedChar);
-            }
+            let faceParts = [];
+            const faceShape = getFeatureValue('face-shape'); if (faceShape) faceParts.push(`wajah ${faceShape}`);
+            const eyeColor = getFeatureValue('eye-color'); if (eyeColor) faceParts.push(`mata berwarna ${eyeColor}`);
+            const eyeShape = getFeatureValue('eye-shape'); if (eyeShape) faceParts.push(`mata berbentuk ${eyeShape}`);
+            const eyebrowShape = getFeatureValue('eyebrow-shape'); if (eyebrowShape) faceParts.push(`alis ${eyebrowShape}`);
+            const noseShape = getFeatureValue('nose-shape'); if (noseShape) faceParts.push(`hidung ${noseShape}`);
+            const lipShape = getFeatureValue('lip-shape'); if (lipShape) faceParts.push(`bibir ${lipShape}`);
+            if(faceParts.length > 0) parts.push(`Detail wajahnya meliputi ${faceParts.join(', ')}`);
+
+            let hairParts = [];
+            const hairStyle = getFeatureValue('hair-style'); if(hairStyle) hairParts.push(hairStyle);
+            const hairColor = getFeatureValue('hair-color'); if(hairColor) hairParts.push(`berwarna ${hairColor}`);
+            if (hairParts.length > 0) parts.push(`Rambutnya ${hairParts.join(' ')}`);
+
+            const generalExpression = getFeatureValue('general-expression'); 
+            if(generalExpression) parts.push(`Memiliki kesan ekspresi ${generalExpression}`);
+            
+            const otherFeatures = characterBlock.querySelector('.character-other-features').value.trim();
+            if(otherFeatures) parts.push(`Ciri khas lainnya adalah ${otherFeatures}`);
+
+            const clothing = characterBlock.querySelector('.character-clothing').value.trim();
+            if (clothing) parts.push(`Mengenakan ${clothing}`);
+            
+            const style = characterBlock.querySelector('.character-style').value.trim();
+            if (style) parts.push(`Gayanya ${style}`);
+            
+            const accessories = characterBlock.querySelector('.character-accessories').value.trim();
+            if(accessories) parts.push(`Dilengkapi dengan aksesoris ${accessories}`);
+
+            const mainAction = characterBlock.querySelector('.character-main-action').value.trim();
+            if(mainAction) parts.push(`Dia sedang ${mainAction}`);
+            
+            const pose = characterBlock.querySelector('.character-pose').value.trim();
+            if(pose) parts.push(`Posenya adalah ${pose}`);
+            
+            const emotion = getDropdownOrFreeTextValue('character-emotion', characterBlock);
+            if (emotion) parts.push(`Emosi yang ditunjukkan adalah ${emotion}`);
+            
+            const additionalDetails = characterBlock.querySelector('.character-additional-details').value.trim();
+            if(additionalDetails) parts.push(`Detail tambahan: ${additionalDetails}`);
+            
+            outputTextarea.value = parts.filter(Boolean).map(p => p.endsWith('.') ? p : p + '.').join(' ');
+            showAlert("<p>Prompt karakter konsisten berhasil dibuat.</p>");
         };
 
         const addCharacter = () => {
@@ -421,8 +650,65 @@
             block.querySelector('h4').textContent = `Karakter ${characterCounter}`;
             block.querySelector('.character-name').addEventListener('input', updateAllDropdowns);
             block.querySelector('.remove-character-btn').onclick = () => { block.remove(); updateAllDropdowns(); };
+            block.querySelector('.generate-char-prompt-btn').addEventListener('click', () => generateCharacterPrompt(block));
+            block.querySelector('.copy-char-prompt-btn').addEventListener('click', () => {
+                 const output = block.querySelector('.character-generated-prompt');
+                 if(output.value) { 
+                    const temp = document.createElement('textarea');
+                    document.body.appendChild(temp);
+                    temp.value = output.value;
+                    temp.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(temp);
+                    showAlert('<p>Prompt karakter disalin!</p>'); 
+                 }
+            });
             characterInputsContainer.appendChild(clone);
             updateAllDropdowns();
+        };
+
+        // --- SCENE FUNCTIONS ---
+        const getCreativeSceneSuggestion = async (sceneBlock) => {
+            const apiKey = apiKeyInput.value.trim();
+            const loader = sceneBlock.querySelector('.scene-loader');
+            const getSuggestionBtn = sceneBlock.querySelector('.get-scene-suggestion-btn');
+            const sceneDescription = sceneBlock.querySelector('.scene-description').value.trim();
+
+            if (!apiKey) { showAlert("<p>API Key Google AI diperlukan.</p>"); return; }
+            if (!sceneDescription) { showAlert("<p>Mohon isi deskripsi adegan.</p>"); return; }
+
+            loader.classList.remove('hidden');
+            getSuggestionBtn.disabled = true;
+            
+            const charactersContext = Array.from(document.querySelectorAll('.character-block')).map(b => b.querySelector('.character-generated-prompt').value.trim()).filter(p => p).join('; ');
+            const prompt = `Anda adalah sinematografer. Berdasarkan deskripsi adegan dan karakter ini, berikan respons dalam format JSON. Respons HARUS memiliki dua kunci utama: 1. "deskripsi_kreatif": sebuah string yang mengembangkan deskripsi asli menjadi lebih sinematik (2-3 kalimat). 2. "saran_kamera": sebuah objek JSON. Di dalam objek 'saran_kamera', harus ada kunci-kunci berikut: 'pergerakan', 'sudut', 'fokus', 'pencahayaan', dan 'gradasi'. Nilai untuk setiap kunci ini HARUS berupa string teks bebas yang mendeskripsikan saran teknis. Contoh: {"pergerakan": "slow panning from left to right", "sudut": "low angle"}. Deskripsi adegan asli: "${sceneDescription}". Konteks karakter: "${charactersContext}"`;
+            const payload = { contents: [{ parts: [{ text: prompt }] }], generationConfig: { response_mime_type: "application/json" } };
+
+            try {
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${apiKey}`;
+                const response = await fetch(apiUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+                if (!response.ok) { throw new Error(`API error: ${response.status}`); }
+                const result = await response.json();
+                
+                if (result.candidates?.[0]?.content?.parts?.[0]?.text) {
+                    const parsedResult = JSON.parse(result.candidates[0].content.parts[0].text);
+                    
+                    sceneBlock.querySelector('.scene-description').value = parsedResult.deskripsi_kreatif || sceneDescription;
+
+                    const suggestions = parsedResult.saran_kamera || {};
+                    sceneBlock.querySelector('.scene-camera-movement-free').value = suggestions.pergerakan || '';
+                    sceneBlock.querySelector('.scene-camera-angle-free').value = suggestions.sudut || '';
+                    sceneBlock.querySelector('.scene-camera-focus-free').value = suggestions.fokus || '';
+                    sceneBlock.querySelector('.scene-lighting-free').value = suggestions.pencahayaan || '';
+                    sceneBlock.querySelector('.scene-color-grading-free').value = suggestions.gradasi || '';
+                    
+                    showAlert("<p>Rekomendasi berhasil dibuat dan diterapkan.</p>");
+                } else { throw new Error("Respons API tidak valid."); }
+            } catch (error) { console.error("Error:", error); showAlert(`<p>Gagal mendapatkan rekomendasi: ${error.message}</p>`);
+            } finally { 
+                loader.classList.add('hidden'); 
+                getSuggestionBtn.disabled = false; 
+            }
         };
 
         const addScene = () => {
@@ -432,100 +718,171 @@
             block.dataset.sceneId = sceneCounter;
             block.querySelector('h4').textContent = `Adegan ${sceneCounter}`;
             block.querySelector('.remove-scene-btn').onclick = () => block.remove();
+            block.querySelector('.get-scene-suggestion-btn').addEventListener('click', () => getCreativeSceneSuggestion(block));
+            updateSceneDialogOptions(block);
+            block.querySelector('.scene-dialog-type').addEventListener('change', () => updateSceneDialogOptions(block));
+            block.querySelector('.scene-dialog-character').addEventListener('change', () => updateSceneDialogContent(block));
             sceneInputsContainer.appendChild(clone);
         };
+        
+        // --- UI & PROMPT FUNCTIONS ---
+        const updateAllDropdowns = () => {
+            const characters = Array.from(document.querySelectorAll('.character-block')).map(b => ({id: b.dataset.characterId, name: b.querySelector('.character-name').value.trim() || `Karakter ${b.dataset.characterId}`}));
+            updateImageTargetDropdown(characters);
+            document.querySelectorAll('.scene-block').forEach(scene => updateSceneDialogOptions(scene));
+        };
 
-        // --- PROMPT GENERATION ---
-        const generatePrompt = () => {
-            const characters = Array.from(document.querySelectorAll('.character-block')).map(c => {
-                const details = {};
-                c.querySelectorAll('input, textarea, select').forEach(i => {
-                    if (i.value.trim()) {
-                        const key = i.className.split(' ')[0].replace('character-', '').replace(/-/g, ' ');
-                        details[key] = i.value.trim();
-                    }
-                });
-                return details;
-            });
-            if (characters.length > 0 && characters.some(c => !c.name || !c['consistent details'])) { showAlert("<p>Mohon lengkapi <b>Nama</b> dan <b>Detail Konsisten</b> untuk setiap karakter.</p>"); return; }
-            if (!locationInput.value.trim()) { showAlert("<p>Mohon lengkapi <b>Lokasi</b>.</p>"); return; }
-            
-            const scenes = Array.from(document.querySelectorAll('.scene-block')).map((s, index) => {
-                const details = { sceneNumber: index + 1 };
-                 s.querySelectorAll('textarea, select').forEach(i => {
-                    const key = i.className.split(' ')[0].replace('scene-', '').replace(/-/g, '_');
-                    details[key] = i.value.trim();
-                });
-                return details;
-            });
-            if (scenes.length === 0 || scenes.some(s => !s.description)) { showAlert("<p>Mohon tambahkan setidaknya satu adegan dan isi <b>Deskripsi Aksi Adegan</b>.</p>"); return; }
+        const updateImageTargetDropdown = (characters) => {
+            const selectedValue = imageTargetSelect.value;
+            imageTargetSelect.innerHTML = '<option value="">Pilih Target...</option><option value="location">Latar/Lokasi Umum</option>';
+            if (characters.length > 0) { imageTargetSelect.innerHTML += characters.map(char => `<option value="${char.id}">${char.name}</option>`).join(''); }
+            if (selectedValue && Array.from(imageTargetSelect.options).some(opt => opt.value === selectedValue)) { imageTargetSelect.value = selectedValue; }
+        };
 
-            const characterDescriptionsId = characters.map(c => `[${Object.entries(c).map(([key, value]) => `${key}: ${value}`).join(', ')}]`).join('; ');
-            const characterDescriptionsEn = characters.map(c => `[${Object.entries(c).map(([key, value]) => `${key}: ${translatePhrase(value) || value}`).join(', ')}]`).join('; ');
-            const finalSubjectId = characters.length > 0 ? `Karakter yang terlibat: ${characterDescriptionsId}` : 'Tidak ada karakter spesifik.';
-            const finalSubjectEn = characters.length > 0 ? `Characters involved: ${characterDescriptionsEn}` : 'No specific characters.';
-
-            const sceneDescriptionsId = scenes.map(s => `Adegan ${s.sceneNumber}: ${s.description}. Kamera: pergerakan ${s.camera_movement}, sudut ${s.camera_angle}, fokus ${s.camera_focus}, pencahayaan ${s.lighting}, warna ${s.color_grading}.`).join(' ');
-            const sceneDescriptionsEn = scenes.map(s => `Scene ${s.sceneNumber}: ${s.description}. Camera: ${translatePhrase(s.camera_movement)} movement, ${translatePhrase(s.camera_angle)} angle, ${translatePhrase(s.camera_focus)} focus, ${translatePhrase(s.lighting)} lighting, ${translatePhrase(s.color_grading)} color.`).join(' ');
-
-            let dialogContentId = '', dialogContentEn = '';
-            if (dialogTypeSelect.value !== "tanpa dialog") {
-                const allDialogsId = [], allDialogsEn = [];
-                document.querySelectorAll('.dialog-content-textarea').forEach(textarea => {
-                    if (textarea.value.trim()) {
-                        const charId = textarea.id.replace('dialogContent-', '');
-                        const charName = getCharacters().find(c => c.id == charId)?.name || `Karakter ${charId}`;
-                        allDialogsId.push(`${charName} berkata: "${textarea.value.trim()}"`);
-                        allDialogsEn.push(`${charName} says: "${textarea.value.trim()}"`);
-                    }
-                });
-                if (allDialogsId.length > 0) {
-                    dialogContentId = ` Isi dialog: ${allDialogsId.join('; ')}.`;
-                    dialogContentEn = ` Dialogue content: ${allDialogsEn.join('; ')}.`;
-                }
+        const updateSceneDialogOptions = (sceneBlock) => {
+            const dialogDetails = sceneBlock.querySelector('.scene-dialog-details');
+            if (sceneBlock.querySelector('.scene-dialog-type').value !== "tanpa dialog") {
+                dialogDetails.classList.remove('hidden');
+                const charSelect = sceneBlock.querySelector('.scene-dialog-character');
+                const characters = Array.from(document.querySelectorAll('.character-block')).map(b => ({id: b.dataset.characterId, name: b.querySelector('.character-name').value.trim() || `Karakter ${b.dataset.characterId}`}));
+                const selectedVal = charSelect.value;
+                charSelect.innerHTML = '<option value="all">Semua Karakter</option>' + characters.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+                charSelect.value = selectedVal || 'all';
+            } else {
+                dialogDetails.classList.add('hidden');
             }
+            updateSceneDialogContent(sceneBlock);
+        };
 
-            const audioId = `Dialog: ${dialogTypeSelect.value}.${dialogContentId} Mood suara: ${moodSoundSelect.value}. Suara lingkungan: ${environmentSoundInput.value.trim() || 'Tidak ada'}. Musik latar: ${backgroundMusicInput.value.trim() || 'Tidak ada'}.`;
-            const audioEn = `Dialogue: ${translatePhrase(dialogTypeSelect.value)}.${dialogContentEn} Sound mood: ${translatePhrase(moodSoundSelect.value)}. Environment sound: ${environmentSoundInput.value.trim() || 'None'}. Background music: ${backgroundMusicInput.value.trim() || 'None'}.`;
+        const updateSceneDialogContent = (sceneBlock) => {
+            const contentContainer = sceneBlock.querySelector('.scene-dialog-content-container');
+            const selectedCharId = sceneBlock.querySelector('.scene-dialog-character').value;
+            const characters = Array.from(document.querySelectorAll('.character-block')).map(b => ({id: b.dataset.characterId, name: b.querySelector('.character-name').value.trim() || `Karakter ${b.dataset.characterId}`}));
+            contentContainer.innerHTML = '';
+            if (sceneBlock.querySelector('.scene-dialog-type').value === "tanpa dialog") return;
+
+            const createDialogTextarea = (char) => `<div class="dialog-content-block"><label class="block text-gray-700 text-sm font-medium mb-1">Dialog ${char.name}:</label><textarea class="w-full dialog-content-textarea" rows="2" placeholder="Tulis dialog..."></textarea></div>`;
             
-            const backgroundId = `Berlatar di ${locationInput.value} pada ${timeSelect.value}, cuaca ${weatherSelect.value}, musim ${seasonSelect.value}.`;
-            const backgroundEn = `Set in ${locationInput.value} during the ${translatePhrase(timeSelect.value)}, ${translatePhrase(weatherSelect.value)} weather, in ${translatePhrase(seasonSelect.value)}.`;
-            const videoSpecsId = `Kualitas ${videoQualitySelect.value}, durasi ${videoDurationSelect.value}, rasio ${videoRatioSelect.value}.`;
-            const videoSpecsEn = `${translatePhrase(videoQualitySelect.value)} quality, ${translatePhrase(videoDurationSelect.value)} duration, ${translatePhrase(videoRatioSelect.value)} aspect ratio.`;
-            const videoType = videoTypeSelect.value;
-            const cameraStyle = cameraStyleSelect.value;
-            const additional = additionalDetailsTextarea.value.trim();
+            if (selectedCharId === 'all') contentContainer.innerHTML = characters.map(createDialogTextarea).join('');
+            else { const char = characters.find(c => c.id == selectedCharId); if(char) contentContainer.innerHTML = createDialogTextarea(char); }
+        };
+
+        const generatePrompt = () => {
+            const characterElements = document.querySelectorAll('.character-block');
+            const sceneElements = document.querySelectorAll('.scene-block');
             
-            promptIdOutput.value = [`Sebuah ${videoType} dengan gaya artistik ${cameraStyle}.`, finalSubjectId, backgroundId, `Rangkaian adegan: ${sceneDescriptionsId}`, `Audio: ${audioId}`, videoSpecsId, additional ? `Detail tambahan: ${additional}` : ''].filter(Boolean).join('\n\n');
-            promptEnOutput.value = [`A ${translatePhrase(videoType)} with a ${translatePhrase(cameraStyle)} artistic style.`, finalSubjectEn, backgroundEn, `Sequence of scenes: ${sceneDescriptionsEn}`, `Audio: ${audioEn}`, videoSpecsEn, additional ? `Additional details: ${additional}` : ''].filter(Boolean).join('\n\n');
+            const charactersId = Array.from(characterElements).map(block => block.querySelector('.character-generated-prompt').value.trim()).filter(p => p && p !== '.');
+            const finalSubjectId = charactersId.length > 0 ? `Subjek: ${charactersId.join('; ')}` : '';
+            
+            const scenesId = Array.from(sceneElements).map((s, index) => {
+                const desc = s.querySelector('.scene-description').value.trim();
+                if (!desc) return null;
+                const mov = getDropdownOrFreeTextValue('scene-camera-movement', s);
+                const angle = getDropdownOrFreeTextValue('scene-camera-angle', s);
+                const focus = getDropdownOrFreeTextValue('scene-camera-focus', s);
+                const light = getDropdownOrFreeTextValue('scene-lighting', s);
+                const color = getDropdownOrFreeTextValue('scene-color-grading', s);
+                const duration = s.querySelector('.scene-duration').value;
+                
+                let audioDetailsId = `Audio: Tanpa dialog. Suara/Musik: ${s.querySelector('.scene-sound-music').value.trim() || 'tidak ada'}.`;
+                if (s.querySelector('.scene-dialog-type').value !== 'tanpa dialog') {
+                    const lang = s.querySelector('.scene-dialog-language').value;
+                    const langIndicator = lang === 'Indonesia' ? '(ID)' : '(ENG)';
+                    const dialect = s.querySelector('.scene-dialog-dialect').value.trim();
+                    let dialogContentId = '';
+                    const allDialogs = [];
+                    s.querySelectorAll('.dialog-content-block').forEach(dialogBlock => {
+                        const textarea = dialogBlock.querySelector('.dialog-content-textarea');
+                        if (textarea.value.trim()) {
+                            const label = dialogBlock.querySelector('label').textContent;
+                            const charName = label.replace('Dialog ', '').replace(':', '').trim();
+                            allDialogs.push(`${charName} berkata: "${textarea.value.trim()}"`);
+                        }
+                    });
+                   if(allDialogs.length > 0) dialogContentId = ` Isi dialog: ${allDialogs.join('; ')}.`;
+                   audioDetailsId = `Audio: Dialog ${s.querySelector('.scene-dialog-type').value} ${langIndicator}, diucapkan dalam bahasa ${lang}${dialect ? ` dengan dialek/aksen ${dialect}` : ''}.${dialogContentId} Mood suara ${s.querySelector('.scene-mood-sound').value}. Suara/Musik: ${s.querySelector('.scene-sound-music').value.trim() || 'tidak ada'}.`;
+                }
+
+                return `Adegan ${index + 1}: ${desc}. Durasi: ${duration}. Kamera: pergerakan ${mov}, sudut ${angle}, fokus ${focus}, pencahayaan ${light}, warna ${color}. ${audioDetailsId}`;
+            }).filter(Boolean);
+            const sceneDescriptionsId = scenesId.join(' ');
+
+            if (sceneElements.length > 0 && scenesId.length === 0) { showAlert("<p>Mohon isi setidaknya satu <b>Deskripsi Aksi Adegan</b>.</p>"); return; }
+            
+            const time = getDropdownOrFreeTextValue('time');
+            const weather = getDropdownOrFreeTextValue('weather');
+            const season = getDropdownOrFreeTextValue('season');
+            const cameraStyle = getDropdownOrFreeTextValue('cameraStyle');
+            const videoMood = getDropdownOrFreeTextValue('videoMood');
+            const generalSubject = getById('generalSubject').value.trim();
+
+            const backgroundId = `Berlatar di ${locationInput.value.trim() || 'lokasi tidak spesifik'} pada ${time}, cuaca ${weather}, musim ${season}.`;
+            
+            const finalPrompt = [`Sebuah ${getDropdownOrFreeTextValue('videoType') || 'video'} tentang ${generalSubject || 'subjek tidak spesifik'} dengan gaya ${cameraStyle || 'tidak spesifik'} dan suasana ${videoMood || 'tidak spesifik'}.`, finalSubjectId, backgroundId, sceneDescriptionsId ? `Rangkaian adegan: ${sceneDescriptionsId}`: '', `Kualitas ${videoQualitySelect.value}, rasio ${videoRatioSelect.value}.`].filter(Boolean).join('\n\n');
+            promptIdOutput.value = finalPrompt + (additionalDetailsTextarea.value.trim() ? `\n\nDetail tambahan: ${additionalDetailsTextarea.value.trim()}` : '') + (negativePromptInput.value.trim() ? `\n\n--no ${negativePromptInput.value.trim()}` : '');
         };
         
-        // --- FORM RESET ---
         const clearFields = () => {
-            document.querySelectorAll('input[type="text"], input[type="password"], textarea').forEach(el => { if(el.id !== 'apiKeyInput') el.value = ''; });
-            document.querySelectorAll('select').forEach(el => el.selectedIndex = 0);
-            characterInputsContainer.innerHTML = ''; sceneInputsContainer.innerHTML = '';
+            document.querySelectorAll('input, textarea, select').forEach(el => { if (el.id !== 'apiKeyInput') el.value = el.tagName === 'SELECT' ? el.options[0].value : ''; });
+            characterInputsContainer.innerHTML = ''; 
+            sceneInputsContainer.innerHTML = '';
             characterCounter = 0; sceneCounter = 0;
-            imageUpload.value = ''; imagePreviewContainer.classList.add('hidden'); imagePreview.src = '#'; generateFromImageBtn.disabled = true;
-            addCharacter(); addScene();
+            imageUpload.value = ''; imagePreviewContainer.classList.add('hidden');
+            additionalDetailsTextarea.value = '';
+            negativePromptInput.value = '';
+            addCharacter(); 
+            addScene();
         };
 
-        // --- EVENT LISTENERS & INITIALIZATION ---
+        const getNegativeSuggestion = async () => {
+            const apiKey = apiKeyInput.value.trim();
+            if (!apiKey) { showAlert("<p>API Key Google AI diperlukan.</p>"); return; }
+            generatePrompt(); 
+            const fullPrompt = promptIdOutput.value;
+            if(!fullPrompt || !fullPrompt.includes('Adegan')) { showAlert("<p>Buat prompt final terlebih dahulu.</p>"); return; }
+
+            getNegativeSuggestionBtn.innerHTML = '<div class="loader !w-5 !h-5"></div>'; getNegativeSuggestionBtn.disabled = true;
+            const prompt = `Dari prompt video ini, berikan list negative prompt relevan (max 10, pisah koma): "${fullPrompt}"`;
+            try {
+                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${apiKey}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] }) });
+                if (!response.ok) throw new Error(`API error: ${response.status}`);
+                const result = await response.json();
+                if (result.candidates?.[0]?.content?.parts?.[0]?.text) {
+                    const existingNegative = negativePromptInput.value.trim();
+                    const newSuggestions = result.candidates[0].content.parts[0].text.trim();
+                    negativePromptInput.value = existingNegative ? `${existingNegative}, ${newSuggestions}` : newSuggestions;
+                    showAlert("<p>Saran negative prompt ditambahkan.</p>");
+                } else throw new Error("Respons API tidak valid.");
+            } catch (error) { console.error("Error:", error); showAlert(`<p>Gagal dapat saran: ${error.message}</p>`);
+            } finally { getNegativeSuggestionBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>'; getNegativeSuggestionBtn.disabled = false; }
+        };
+
+        // --- INITIALIZATION ---
         addCharacterBtn.addEventListener('click', addCharacter);
         addSceneBtn.addEventListener('click', addScene);
         generateBtn.addEventListener('click', generatePrompt);
         clearBtn.addEventListener('click', clearFields);
-        dialogTypeSelect.addEventListener('change', updateDialogCharacterDropdown);
-        dialogCharacterSelect.addEventListener('change', updateDialogContentInputs);
+        getNegativeSuggestionBtn.addEventListener('click', getNegativeSuggestion);
+        getById('copy-prompt-id-btn').addEventListener('click', () => { 
+            const ta = getById('promptId');
+            if(ta.value) { 
+                ta.select();
+                document.execCommand('copy');
+                showAlert('<p>Prompt berhasil disalin!</p>'); 
+            }
+        });
         closeWelcomeBtn.addEventListener('click', () => { welcomeModal.style.display = 'none'; });
         window.onclick = (event) => { if (event.target == welcomeModal || event.target == modal) event.target.style.display = "none"; };
-
-        document.addEventListener('DOMContentLoaded', () => {
-            welcomeModal.style.display = 'flex';
-            addCharacter();
+        
+        // Add event listeners for the style selection
+        cameraStyleSelect.addEventListener('change', updateStyleKeywords);
+        cameraStyleFreeInput.addEventListener('input', updateStyleKeywords);
+        
+        document.addEventListener('DOMContentLoaded', () => { 
+            welcomeModal.style.display = 'flex'; 
+            addCharacter(); 
             addScene();
         });
-
     </script>
 </body>
 </html>
